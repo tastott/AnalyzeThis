@@ -14,7 +14,7 @@ namespace CSharpAnalyzer.Test
 
         //No diagnostics expected to show up
         [TestMethod]
-        public void TestMethod1()
+        public void EmptyFile()
         {
             var test = @"";
 
@@ -23,47 +23,48 @@ namespace CSharpAnalyzer.Test
 
         //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public void TestMethod2()
+        public void ReadOnlyPropertyNotSetInConstructor()
         {
             var test = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
+    namespace MyNamespace
     {
-        class TypeName
-        {   
+        class MyClass
+        {
+            private readonly int blah;
+            private readonly int foo;
+
+            public MyClass()
+            {
+                this.foo = 4;
+            }
         }
     }";
             var expected = new DiagnosticResult
             {
                 Id = "CSharpAnalyzer",
-                Message = String.Format("Type name '{0}' contains lowercase letters", "TypeName"),
-                Severity = DiagnosticSeverity.Warning,
+                Message = $"Readonly field(s) not assigned in constructor: blah.",
+                Severity = DiagnosticSeverity.Error,
                 Locations =
                     new[] {
-                            new DiagnosticResultLocation("Test0.cs", 11, 15)
+                            new DiagnosticResultLocation("Test0.cs", 9, 13)
                         }
             };
 
             VerifyCSharpDiagnostic(test, expected);
 
             var fixtest = @"
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
-    using System.Diagnostics;
-
-    namespace ConsoleApplication1
+    namespace MyNamespace
     {
-        class TYPENAME
-        {   
+        class MyClass
+        {
+            private readonly int blah;
+            private readonly int foo;
+
+            public MyClass()
+            {
+                this.foo = 4;
+                this.blah = 0;
+            }
         }
     }";
             VerifyCSharpFix(test, fixtest);
