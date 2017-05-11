@@ -34,10 +34,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AnalysisRule.cs" />
     <Compile Include="CodeFixProvider.cs" />
     <Compile Include="DiagnosticAnalyzer.cs" />
     <Compile Include="EnumerableExtensions.cs" />
+    <Compile Include="FixableAnalysisRule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReadonlyField\ReadonlyFieldRule.cs" />
     <Compile Include="Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

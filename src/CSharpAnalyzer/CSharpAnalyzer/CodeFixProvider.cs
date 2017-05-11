@@ -22,7 +22,13 @@ namespace CSharpAnalyzer
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
-            get { return ImmutableArray.Create(CSharpAnalyzerAnalyzer.DiagnosticId); }
+            get
+            {
+                return CSharpAnalyzerAnalyzer.Rules
+                    .WhereIs<AnalysisRule, FixableAnalysisRule>()
+                    .Select(rule => rule.DiagnosticId)
+                    .ToImmutableArray();
+            }
         }
 
         public sealed override FixAllProvider GetFixAllProvider()
