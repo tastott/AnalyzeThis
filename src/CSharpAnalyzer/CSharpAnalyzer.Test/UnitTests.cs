@@ -129,6 +129,39 @@ namespace CSharpAnalyzer.Test
             VerifyNoCSharpDiagnostics(test);
         }
 
+        [TestMethod]
+        public void FixAddsConstructorParameterAndAssignment()
+        {
+            var test = @"
+    namespace MyNamespace
+    {
+        class MyClass
+        {
+            private readonly int foo;
+
+            public MyClass()
+            {
+            }
+        }
+    }";
+
+            var expected = @"
+    namespace MyNamespace
+    {
+        class MyClass
+        {
+            private readonly int foo;
+
+            public MyClass(int foo)
+            {
+                this.foo = foo;
+            }
+        }
+    }";
+
+            VerifyCSharpFix(test, expected);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new CSharpAnalyzerCodeFixProvider();

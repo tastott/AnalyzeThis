@@ -18,7 +18,7 @@ namespace CSharpAnalyzer
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CSharpAnalyzerCodeFixProvider)), Shared]
     public class CSharpAnalyzerCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Make uppercase";
+        private const string title = "Set with new constructor parameter";
 
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
@@ -46,9 +46,30 @@ namespace CSharpAnalyzer
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c),
+                    createChangedDocument: c => AddConstructorParameterAndAssignAsync(context.Document, null /* TODO */, null /* TODO */, c),
                     equivalenceKey: title),
                 diagnostic);
+        }
+
+        private async Task<Document> AddConstructorParameterAndAssignAsync(
+            Document document, 
+            ConstructorDeclarationSyntax constructorNode,
+            IEnumerable<string> fields,
+            CancellationToken cancellationToken
+        )
+        {
+            // TODO: Adapt this to add new paramters as necessary
+            var updatedMethod = constructorNode.AddParameterListParameters(
+            SyntaxFactory.Parameter(
+                SyntaxFactory.Identifier("cancellationToken"))
+                .WithType(SyntaxFactory.ParseTypeName(typeof(CancellationToken).FullName)));
+
+            var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
+
+            var updatedSyntaxTree =
+                syntaxTree.GetRoot().ReplaceNode(constructorNode, updatedMethod);
+
+            return document.WithSyntaxRoot(updatedSyntaxTree);
         }
 
         private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
