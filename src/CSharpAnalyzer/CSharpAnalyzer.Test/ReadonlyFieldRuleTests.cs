@@ -32,9 +32,9 @@ namespace CSharpAnalyzer.Test
             private readonly int blah;
             private readonly int foo;
 
-            public MyClass()
+            public MyClass(int foo)
             {
-                this.foo = 4;
+                this.foo = foo;
             }
         }
     }";
@@ -133,31 +133,31 @@ namespace CSharpAnalyzer.Test
         public void FixAddsConstructorParameterAndAssignment()
         {
             var test = @"
-    namespace MyNamespace
+namespace MyNamespace
+{
+    class MyClass
     {
-        class MyClass
-        {
-            private readonly int foo;
+        private readonly int foo;
 
-            public MyClass()
-            {
-            }
+        public MyClass()
+        {
         }
-    }";
+    }
+}";
 
             var expected = @"
-    namespace MyNamespace
+namespace MyNamespace
+{
+    class MyClass
     {
-        class MyClass
-        {
-            private readonly int foo;
+        private readonly int foo;
 
-            public MyClass(int foo)
-            {
-                this.foo = foo;
-            }
+        public MyClass(int foo)
+        {
+            this.foo = foo;
         }
-    }";
+    }
+}";
 
             VerifyCSharpFix(test, expected);
         }

@@ -18,8 +18,7 @@ namespace CSharpAnalyzer
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CSharpAnalyzerCodeFixProvider)), Shared]
     public class CSharpAnalyzerCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Set with new constructor parameter";
-
+        
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
             get
@@ -39,44 +38,16 @@ namespace CSharpAnalyzer
 
         public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
         {
-            var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
-
-            // TODO: Replace the following code with your own analysis, generating a CodeAction for each fix to suggest
-            var diagnostic = context.Diagnostics.First();
-            var diagnosticSpan = diagnostic.Location.SourceSpan;
-
-            // Find the type declaration identified by the diagnostic.
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
-
-            // Register a code action that will invoke the fix.
-            context.RegisterCodeFix(
-                CodeAction.Create(
-                    title: title,
-                    createChangedDocument: c => AddConstructorParameterAndAssignAsync(context.Document, null /* TODO */, null /* TODO */, c),
-                    equivalenceKey: title),
-                diagnostic);
+            foreach (var diagnostic in context.Diagnostics)
+            {
+                CSharpAnalyzerAnalyzer.Rules
+                    .WhereIs<AnalysisRule, FixableAnalysisRule>()
+                    .FirstOrDefault(rule => diagnostic.Id == rule.DiagnosticId)
+                    ?.RegisterCodeFix(context, diagnostic);
+            }
         }
 
-        private async Task<Document> AddConstructorParameterAndAssignAsync(
-            Document document, 
-            ConstructorDeclarationSyntax constructorNode,
-            IEnumerable<string> fields,
-            CancellationToken cancellationToken
-        )
-        {
-            // TODO: Adapt this to add new paramters as necessary
-            var updatedMethod = constructorNode.AddParameterListParameters(
-            SyntaxFactory.Parameter(
-                SyntaxFactory.Identifier("cancellationToken"))
-                .WithType(SyntaxFactory.ParseTypeName(typeof(CancellationToken).FullName)));
-
-            var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
-
-            var updatedSyntaxTree =
-                syntaxTree.GetRoot().ReplaceNode(constructorNode, updatedMethod);
-
-            return document.WithSyntaxRoot(updatedSyntaxTree);
-        }
+        
 
         private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
         {

@@ -8,11 +8,17 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
 using System.Collections.Immutable;
+using System.Threading;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.Formatting;
 
 namespace CSharpAnalyzer.ReadonlyField
 {
-    internal class ReadonlyFieldRule : AnalysisRule
+    internal class ReadonlyFieldRule : FixableAnalysisRule
     {
+        private readonly string fixTitle = "Set with new constructor parameter";
+
         public ReadonlyFieldRule() 
             : base(
                   diagnosticId: "CSharpAnalyzer", 
@@ -30,37 +36,107 @@ namespace CSharpAnalyzer.ReadonlyField
             context.RegisterSyntaxNodeAction(AnalyzeNode, SyntaxKind.ConstructorDeclaration);
         }
 
+        public override void RegisterCodeFix(CodeFixContext context, Diagnostic diagnostic)
+        {
+            // Register a code action that will invoke the fix.
+            context.RegisterCodeFix(
+                CodeAction.Create(
+                    title: fixTitle,
+                    createChangedDocument: c => AddConstructorParameterAndAssignAsync(context.Document, diagnostic.Location, c),
+                    equivalenceKey: fixTitle
+                ),
+                diagnostic);
+        }
+
         private void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             var constructorNode = context.Node as ConstructorDeclarationSyntax;
 
-            // Ignore chained 'this' constructors
-            if (constructorNode.Initializer?.Kind() == SyntaxKind.ThisConstructorInitializer)
-            {
-                return;
-            }
 
-            var classNode = constructorNode.Parent as ClassDeclarationSyntax;
-
-            var assignedFields = (constructorNode.Body?.DescendantNodes() ?? Enumerable.Empty<SyntaxNode>())
-                .WhereIs<SyntaxNode, AssignmentExpressionSyntax>()
-                .Select(assignment => assignment.Left)
-                .WhereIs<ExpressionSyntax, MemberAccessExpressionSyntax>()
-                .Select(memberAccess => memberAccess.Name.Identifier.ValueText)
-                .ToImmutableHashSet();
-
-            var unsetReadonlyFieldNames = classNode.Members
-                .WhereIs<SyntaxNode, FieldDeclarationSyntax>() // Fields
-                .Where(fieldNode => fieldNode.Modifiers.Any(SyntaxKind.ReadOnlyKeyword)) // Readonly
-                .Where(fieldNode => fieldNode.Declaration.Variables.First().Initializer == null) // Not initialized inline
-                .Where(fieldNode => !assignedFields.Contains(fieldNode.Declaration.Variables.First().Identifier.ValueText)) // Not assigned in constructor
-                .Select(fieldNode => fieldNode.Declaration.Variables.First().Identifier.ValueText);
+            IEnumerable<string> unsetReadonlyFieldNames = GetUnassignedReadonlyFields(constructorNode)
+                .Select(declaration => declaration.GetIdentifierText());
 
             if (unsetReadonlyFieldNames.Any())
             {
                 var diagnostic = Diagnostic.Create(this.Descriptor, constructorNode.GetLocation(), string.Join(", ", unsetReadonlyFieldNames));
                 context.ReportDiagnostic(diagnostic);
             }
+        }
+
+        private static IEnumerable<FieldDeclarationSyntax> GetUnassignedReadonlyFields(ConstructorDeclarationSyntax constructorNode)
+        {
+            // Ignore chained 'this' constructors
+            if (constructorNode.Initializer?.Kind() == SyntaxKind.ThisConstructorInitializer)
+            {
+                return Enumerable.Empty<FieldDeclarationSyntax>();
+            }
+
+            var classNode = constructorNode.Parent as ClassDeclarationSyntax;
+
+            var assignedFields = (constructorNode.Body?.DescendantNodes() ?? Enumerable.Empty<SyntaxNode>())
+                .WhereIs<SyntaxNode, AssignmentExpressionSyntax>()
+                .Select(x =>
+                {
+                    return x;
+                })
+                .Select(assignment => assignment.Left)
+                .WhereIs<ExpressionSyntax, MemberAccessExpressionSyntax>()
+                .Select(memberAccess => memberAccess.Name.Identifier.ValueText)
+                .ToImmutableHashSet();
+
+            var unsetReadonlyFields = classNode.Members
+                .WhereIs<SyntaxNode, FieldDeclarationSyntax>() // Fields
+                .Where(fieldNode => fieldNode.Modifiers.Any(SyntaxKind.ReadOnlyKeyword)) // Readonly
+                .Where(fieldNode => fieldNode.Declaration.Variables.First().Initializer == null) // Not initialized inline
+                .Where(fieldNode => !assignedFields.Contains(fieldNode.GetIdentifierText())); // Not assigned in constructor
+
+            return unsetReadonlyFields;
+        }
+
+        private async Task<Document> AddConstructorParameterAndAssignAsync(
+            Document document,
+            Location location,
+            CancellationToken cancellationToken
+        )
+        {
+            var root = await document.GetSyntaxRootAsync(cancellationToken);
+            var constructorNode = root.FindNode(location.SourceSpan) as ConstructorDeclarationSyntax;
+
+            var unassignedFields = GetUnassignedReadonlyFields(constructorNode);
+            var newParameters = unassignedFields
+                .Select(field =>
+                    SyntaxFactory.Parameter(
+                        SyntaxFactory
+                            .Identifier(field.GetIdentifierText())
+                        )
+                        .WithType(field.Declaration.Type)
+                    );
+
+            var newStatements = unassignedFields.Select(field =>
+                SyntaxFactory.ExpressionStatement(
+                    SyntaxFactory.AssignmentExpression(
+                        SyntaxKind.SimpleAssignmentExpression,
+                        SyntaxFactory.MemberAccessExpression(
+                            SyntaxKind.SimpleMemberAccessExpression,
+                            SyntaxFactory.ThisExpression(),
+                            SyntaxFactory.IdentifierName(field.GetIdentifierText())
+                        ),
+                        SyntaxFactory.IdentifierName(field.GetIdentifierText())
+                    )
+                )
+            );
+
+            var updatedMethod = constructorNode
+                .AddParameterListParameters(newParameters.ToArray())
+                .AddBodyStatements(newStatements.ToArray());
+
+            var syntaxTree = await document.GetSyntaxTreeAsync(cancellationToken);
+
+            var updatedSyntaxTree = root.ReplaceNode(constructorNode, updatedMethod);
+            updatedSyntaxTree = Formatter.Format(updatedSyntaxTree, new AdhocWorkspace());
+
+
+            return document.WithSyntaxRoot(updatedSyntaxTree);
         }
     }
 }

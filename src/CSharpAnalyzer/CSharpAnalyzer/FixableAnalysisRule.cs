@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeFixes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,6 @@ namespace CSharpAnalyzer
         {
         }
 
-        public abstract void RegisterCodeFix(Diagnostic diagnostic);
+        public abstract void RegisterCodeFix(CodeFixContext context, Diagnostic diagnostic);
     }
 }
