@@ -42,6 +42,13 @@ namespace CSharpAnalyzer
         private static void AnalyzeNode(SyntaxNodeAnalysisContext context)
         {
             var constructorNode = context.Node as ConstructorDeclarationSyntax;
+
+            // Ignore chained 'this' constructors
+            if (constructorNode.Initializer?.Kind() == SyntaxKind.ThisConstructorInitializer)
+            {
+                return;
+            }
+
             var classNode = constructorNode.Parent as ClassDeclarationSyntax;
       
             var assignedFields = (constructorNode.Body?.DescendantNodes() ?? Enumerable.Empty<SyntaxNode>())
@@ -52,9 +59,10 @@ namespace CSharpAnalyzer
                 .ToImmutableHashSet();
 
             var unsetReadonlyFieldNames = classNode.Members
-                .WhereIs<SyntaxNode, FieldDeclarationSyntax>()
-                .Where(fieldNode => fieldNode.Modifiers.Any(SyntaxKind.ReadOnlyKeyword))
-                .Where(fieldNode => !assignedFields.Contains(fieldNode.Declaration.Variables.First().Identifier.ValueText))
+                .WhereIs<SyntaxNode, FieldDeclarationSyntax>() // Fields
+                .Where(fieldNode => fieldNode.Modifiers.Any(SyntaxKind.ReadOnlyKeyword)) // Readonly
+                .Where(fieldNode => fieldNode.Declaration.Variables.First().Initializer == null) // Not initialized inline
+                .Where(fieldNode => !assignedFields.Contains(fieldNode.Declaration.Variables.First().Identifier.ValueText)) // Not assigned in constructor
                 .Select(fieldNode => fieldNode.Declaration.Variables.First().Identifier.ValueText);
 
             if (unsetReadonlyFieldNames.Any())

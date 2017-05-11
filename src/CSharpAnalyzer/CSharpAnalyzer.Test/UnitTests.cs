@@ -21,9 +21,8 @@ namespace CSharpAnalyzer.Test
             VerifyCSharpDiagnostic(test);
         }
 
-        //Diagnostic and CodeFix both triggered and checked for
         [TestMethod]
-        public void ReadOnlyPropertyNotSetInConstructor()
+        public void DetectsUnassignedReadOnlyProperty()
         {
             var test = @"
     namespace MyNamespace
@@ -51,23 +50,83 @@ namespace CSharpAnalyzer.Test
             };
 
             VerifyCSharpDiagnostic(test, expected);
+        }
 
-            var fixtest = @"
+        [TestMethod]
+        public void IgnoresChainedThisConstructor()
+        {
+            var test = @"
     namespace MyNamespace
     {
         class MyClass
         {
-            private readonly int blah;
             private readonly int foo;
 
-            public MyClass()
+            public MyClass(int foo)
             {
-                this.foo = 4;
-                this.blah = 0;
+                this.foo = foo;
+            }
+
+            public MyClass()
+                : this(4)
+            {
             }
         }
     }";
-            VerifyCSharpFix(test, fixtest);
+
+            VerifyNoCSharpDiagnostics(test);
+        }
+
+        [TestMethod]
+        public void DoesntIgnoreChainedBaseConstructor()
+        {
+            var test = @"
+    namespace MyNamespace
+    {
+        class BaseClass {}
+
+        class MyClass : BaseClass
+        {
+            private readonly int foo;
+
+            public MyClass(int foo)
+                : base()
+            {
+            }
+        }
+    }";
+
+            var expected = new DiagnosticResult
+            {
+                Id = "CSharpAnalyzer",
+                Message = $"Readonly field(s) not assigned in constructor: foo.",
+                Severity = DiagnosticSeverity.Error,
+                Locations =
+                    new[] {
+                            new DiagnosticResultLocation("Test0.cs", 10, 13)
+                        }
+            };
+
+            VerifyCSharpDiagnostic(test, expected);
+        }
+
+        [TestMethod]
+        public void IgnoresFieldAssignedOnDeclaration()
+        {
+            var test = @"
+    namespace MyNamespace
+    {
+        class MyClass
+        {
+            private readonly int foo = 1;
+
+            public MyClass()
+            {
+            }
+        }
+    }";
+
+            VerifyNoCSharpDiagnostics(test);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()

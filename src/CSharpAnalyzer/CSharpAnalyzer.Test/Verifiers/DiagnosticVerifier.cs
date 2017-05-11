@@ -44,6 +44,11 @@ namespace TestHelper
             VerifyDiagnostics(new[] { source }, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), expected);
         }
 
+        protected void VerifyNoCSharpDiagnostics(string source)
+        {
+            VerifyDiagnostics(new[] { source }, LanguageNames.CSharp, GetCSharpDiagnosticAnalyzer(), Enumerable.Empty<DiagnosticResult>().ToArray());
+        }
+
         /// <summary>
         /// Called to test a VB DiagnosticAnalyzer when applied on the single inputted string as a source
         /// Note: input a DiagnosticResult for each Diagnostic expected
