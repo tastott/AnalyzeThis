@@ -46,11 +46,11 @@ namespace MyNamespace
             var expected = new DiagnosticResult
             {
                 Id = "Todo",
-                Message = $"TODO: Blah, blah, etc",
+                Message = $"TODO: Blah, blah, etc.",
                 Severity = DiagnosticSeverity.Info,
                 Locations =
                     new[] {
-                            new DiagnosticResultLocation("Test0.cs", 8, 16)
+                            new DiagnosticResultLocation("Test0.cs", 8, 13)
                         }
             };
 
