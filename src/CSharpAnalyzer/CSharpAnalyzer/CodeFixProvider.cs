@@ -18,13 +18,31 @@ namespace CSharpAnalyzer
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CSharpAnalyzerCodeFixProvider)), Shared]
     public class CSharpAnalyzerCodeFixProvider : CodeFixProvider
     {
-        
+        private readonly IEnumerable<FixableAnalysisRule> rules;
+
+        public CSharpAnalyzerCodeFixProvider()
+            : this(CSharpAnalyzerAnalyzer.AllRules
+                    .WhereIs<AnalysisRule, FixableAnalysisRule>()
+            )
+        {
+
+        }
+
+        internal CSharpAnalyzerCodeFixProvider(IEnumerable<FixableAnalysisRule> rules)
+        {
+            this.rules = rules;
+        }
+
+        internal CSharpAnalyzerCodeFixProvider(params FixableAnalysisRule[] rules)
+        {
+            this.rules = rules;
+        }
+
         public sealed override ImmutableArray<string> FixableDiagnosticIds
         {
             get
             {
-                return CSharpAnalyzerAnalyzer.Rules
-                    .WhereIs<AnalysisRule, FixableAnalysisRule>()
+                return this.rules
                     .Select(rule => rule.DiagnosticId)
                     .ToImmutableArray();
             }
@@ -40,9 +58,7 @@ namespace CSharpAnalyzer
         {
             foreach (var diagnostic in context.Diagnostics)
             {
-                CSharpAnalyzerAnalyzer.Rules
-                    .WhereIs<AnalysisRule, FixableAnalysisRule>()
-                    .FirstOrDefault(rule => diagnostic.Id == rule.DiagnosticId)
+                this.rules.FirstOrDefault(rule => diagnostic.Id == rule.DiagnosticId)
                     ?.RegisterCodeFix(context, diagnostic);
             }
         }

@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using TestHelper;
 using CSharpAnalyzer;
+using CSharpAnalyzer.ReadonlyField;
 
 namespace CSharpAnalyzer.Test
 {
@@ -262,12 +263,12 @@ namespace MyNamespace
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpAnalyzerCodeFixProvider();
+            return new CSharpAnalyzerCodeFixProvider(new ReadonlyFieldRule());
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAnalyzerAnalyzer();
+            return new CSharpAnalyzerAnalyzer(new ReadonlyFieldRule());
         }
     }
 }

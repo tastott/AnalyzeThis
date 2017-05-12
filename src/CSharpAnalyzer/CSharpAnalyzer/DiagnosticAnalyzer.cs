@@ -15,11 +15,29 @@ namespace CSharpAnalyzer
     public class CSharpAnalyzerAnalyzer : DiagnosticAnalyzer
     {
 
-        internal readonly static IEnumerable<AnalysisRule> Rules = 
+        internal readonly static IEnumerable<AnalysisRule> AllRules = 
             new AnalysisRule[]
             {
                 new ReadonlyFieldRule()
             };
+
+        private readonly IEnumerable<AnalysisRule> rules;
+
+        public CSharpAnalyzerAnalyzer()
+            : this(AllRules)
+        {
+
+        }
+
+        internal CSharpAnalyzerAnalyzer(IEnumerable<AnalysisRule> rules)
+        {
+            this.rules = rules;
+        }
+
+        internal CSharpAnalyzerAnalyzer(params AnalysisRule[] rules)
+        {
+            this.rules = rules;
+        }
 
         // You can change these strings in the Resources.resx file. If you do not want your analyzer to be localize-able, you can use regular strings for Title and MessageFormat.
         // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Localizing%20Analyzers.md for more on localization
@@ -27,12 +45,12 @@ namespace CSharpAnalyzer
         //private static readonly LocalizableString MessageFormat = new LocalizableResourceString(nameof(Resources.AnalyzerMessageFormat), Resources.ResourceManager, typeof(Resources));
         //private static readonly LocalizableString Description = new LocalizableResourceString(nameof(Resources.AnalyzerDescription), Resources.ResourceManager, typeof(Resources));
         //private const string Category = "Naming";
-   
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics
         {
             get
             {
-                return Rules
+                return this.rules
                     .Select(rule => rule.Descriptor)
                     .ToImmutableArray();
             }
@@ -42,7 +60,7 @@ namespace CSharpAnalyzer
         {
             // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            foreach (var rule in Rules)
+            foreach (var rule in AllRules)
             {
                 rule.Register(context);
             }
