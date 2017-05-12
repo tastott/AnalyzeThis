@@ -1,17 +1,19 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using TestHelper;
-using CSharpAnalyzer;
 using CSharpAnalyzer.ReadonlyField;
+using CSharpAnalyzer.Test.Verifiers;
 
 namespace CSharpAnalyzer.Test
 {
     [TestClass]
-    public class UnitTest : CodeFixVerifier
+    public class ReadonlyFieldRuleTests : FixableAnalysisRuleVerifier
     {
+        public ReadonlyFieldRuleTests()
+            : base(new ReadonlyFieldRule())
+        {
+
+        }
 
         //No diagnostics expected to show up
         [TestMethod]
@@ -259,16 +261,6 @@ namespace MyNamespace
 }";
 
             VerifyCSharpFix(test, expected);
-        }
-
-        protected override CodeFixProvider GetCSharpCodeFixProvider()
-        {
-            return new CSharpAnalyzerCodeFixProvider(new ReadonlyFieldRule());
-        }
-
-        protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
-        {
-            return new CSharpAnalyzerAnalyzer(new ReadonlyFieldRule());
         }
     }
 }

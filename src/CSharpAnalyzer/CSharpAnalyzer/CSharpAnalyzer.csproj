@@ -47,6 +47,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="SyntaxNodeExtensions.cs" />
+    <Compile Include="Todo\TodoRule.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources.resx">
