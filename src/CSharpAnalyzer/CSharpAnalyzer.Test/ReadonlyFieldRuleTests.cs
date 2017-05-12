@@ -228,6 +228,38 @@ namespace MyNamespace
             VerifyCSharpFix(test, expected);
         }
 
+        [TestMethod]
+        public void FixDoesNotAssignIfExistingParameterIsOfWrongType()
+        {
+            var test = @"
+namespace MyNamespace
+{
+    class MyClass
+    {
+        public readonly int Foo;
+
+        public MyClass(string foo)
+        {
+        }
+    }
+}";
+
+            var expected = @"
+namespace MyNamespace
+{
+    class MyClass
+    {
+        public readonly int Foo;
+
+        public MyClass(string foo)
+        {
+        }
+    }
+}";
+
+            VerifyCSharpFix(test, expected);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new CSharpAnalyzerCodeFixProvider();

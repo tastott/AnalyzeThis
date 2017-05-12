@@ -13,5 +13,11 @@ namespace CSharpAnalyzer
         {
             return fieldDeclaration.Declaration.Variables.First().Identifier.ValueText;
         }
+
+        public static bool ProperEquals(this TypeSyntax typeA, TypeSyntax typeB)
+        {
+            // TODO: There must be a better way of doing type equality
+            return typeA.ToString().Equals(typeB.ToString(), StringComparison.OrdinalIgnoreCase);
+        }
     }
 }

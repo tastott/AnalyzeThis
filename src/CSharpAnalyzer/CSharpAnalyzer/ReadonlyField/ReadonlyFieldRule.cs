@@ -123,7 +123,33 @@ namespace CSharpAnalyzer.ReadonlyField
                     );
 
             var newStatements = unassignedFields.Select(field =>
-                SyntaxFactory.ExpressionStatement(
+            {
+
+                ParameterSyntax existingParameter;
+                string assignmentRight;
+
+                // Find existing parameter with same name (ignoring case)
+                if (existingParameters.TryGetValue(field.GetIdentifierText(), out existingParameter))
+                {
+                    // Use it if type is the same
+                    if (existingParameter.Type.ProperEquals(field.Declaration.Type))
+                    {
+                        assignmentRight = existingParameter.Identifier.ValueText;
+                    }
+                    // Abort if type is different
+                    else
+                    {
+                        return null;
+                    }
+                }
+                // Otherwise use adjusted field name
+                else
+                {
+                    assignmentRight = this.GetLocalIdentifierName(field.GetIdentifierText());
+                }
+
+
+                return SyntaxFactory.ExpressionStatement(
                     SyntaxFactory.AssignmentExpression(
                         SyntaxKind.SimpleAssignmentExpression,
                         SyntaxFactory.MemberAccessExpression(
@@ -131,10 +157,11 @@ namespace CSharpAnalyzer.ReadonlyField
                             SyntaxFactory.ThisExpression(),
                             SyntaxFactory.IdentifierName(field.GetIdentifierText())
                         ),
-                        SyntaxFactory.IdentifierName(this.GetLocalIdentifierName(field.GetIdentifierText()))
+                        SyntaxFactory.IdentifierName(assignmentRight)
                     )
-                )
-            );
+                );
+            })
+            .Where(statement => statement != null);
 
             var updatedMethod = constructorNode
                 .AddParameterListParameters(newParameters.ToArray())
