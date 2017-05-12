@@ -162,6 +162,72 @@ namespace MyNamespace
             VerifyCSharpFix(test, expected);
         }
 
+        [TestMethod]
+        public void FixAddsConstructorParameterInLowerCase()
+        {
+            var test = @"
+namespace MyNamespace
+{
+    class MyClass
+    {
+        public readonly int FooBar;
+
+        public MyClass()
+        {
+        }
+    }
+}";
+
+            var expected = @"
+namespace MyNamespace
+{
+    class MyClass
+    {
+        public readonly int FooBar;
+
+        public MyClass(int fooBar)
+        {
+            this.FooBar = fooBar;
+        }
+    }
+}";
+
+            VerifyCSharpFix(test, expected);
+        }
+
+        [TestMethod]
+        public void FixAddsAssignmentOnlyIfParameterAlreadyPresent()
+        {
+            var test = @"
+namespace MyNamespace
+{
+    class MyClass
+    {
+        public readonly int Foo;
+
+        public MyClass(int foo)
+        {
+        }
+    }
+}";
+
+            var expected = @"
+namespace MyNamespace
+{
+    class MyClass
+    {
+        public readonly int Foo;
+
+        public MyClass(int foo)
+        {
+            this.Foo = foo;
+        }
+    }
+}";
+
+            VerifyCSharpFix(test, expected);
+        }
+
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
             return new CSharpAnalyzerCodeFixProvider();

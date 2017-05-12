@@ -12,12 +12,13 @@ using System.Threading;
 using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Formatting;
+using System.Text.RegularExpressions;
 
 namespace CSharpAnalyzer.ReadonlyField
 {
     internal class ReadonlyFieldRule : FixableAnalysisRule
     {
-        private readonly string fixTitle = "Set with new constructor parameter";
+        private readonly string fixTitle = "Set with constructor parameter";
 
         public ReadonlyFieldRule() 
             : base(
@@ -93,6 +94,11 @@ namespace CSharpAnalyzer.ReadonlyField
             return unsetReadonlyFields;
         }
 
+        private string GetLocalIdentifierName(string originalName)
+        {
+            return Regex.Replace(originalName, "^[A-Z]", match => match.Value.ToLower());
+        }
+
         private async Task<Document> AddConstructorParameterAndAssignAsync(
             Document document,
             Location location,
@@ -101,13 +107,17 @@ namespace CSharpAnalyzer.ReadonlyField
         {
             var root = await document.GetSyntaxRootAsync(cancellationToken);
             var constructorNode = root.FindNode(location.SourceSpan) as ConstructorDeclarationSyntax;
+            var existingParameters = constructorNode.ParameterList
+                .Parameters
+                .ToDictionary(parameter => parameter.Identifier.ValueText, StringComparer.OrdinalIgnoreCase);
 
             var unassignedFields = GetUnassignedReadonlyFields(constructorNode);
             var newParameters = unassignedFields
+                .Where(field => !existingParameters.ContainsKey(field.GetIdentifierText()))
                 .Select(field =>
                     SyntaxFactory.Parameter(
                         SyntaxFactory
-                            .Identifier(field.GetIdentifierText())
+                            .Identifier(this.GetLocalIdentifierName(field.GetIdentifierText()))
                         )
                         .WithType(field.Declaration.Type)
                     );
@@ -121,7 +131,7 @@ namespace CSharpAnalyzer.ReadonlyField
                             SyntaxFactory.ThisExpression(),
                             SyntaxFactory.IdentifierName(field.GetIdentifierText())
                         ),
-                        SyntaxFactory.IdentifierName(field.GetIdentifierText())
+                        SyntaxFactory.IdentifierName(this.GetLocalIdentifierName(field.GetIdentifierText()))
                     )
                 )
             );
