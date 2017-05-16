@@ -17,11 +17,9 @@ build:
   verbosity: minimal
   project: src\AnalyzeThis.sln
 
-after_build:
-  ps: nuget pack src\AnalyzeThis\AnalyzeThis.nuspec -NoPackageAnalysis -Version $env:appveyor_build_version -OutputDirectory .
-
 artifacts:
-  - path: AnalyzeThis.$(appveyor_build_version).nupkg
+  - path: '**\AnalyzeThis.$(appveyor_build_version).nupkg'
+    name: AnalyzeThis.$(appveyor_build_version).nupkg
 
 deploy:
   - provider: NuGet
