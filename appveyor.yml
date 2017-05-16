@@ -16,7 +16,12 @@ assembly_info:
 build:
   verbosity: minimal
   project: src\AnalyzeThis.sln
-  publish_nuget: true
+
+after_build:
+  ps: nuget pack src\AnalyzeThis\AnalyzeThis.nuspec -NoPackageAnalysis -Version $env:appveyor_build_version -OutputDirectory .
+
+artifacts:
+  - path: AnalyzeThis.$(appveyor_build_version).nupkg
 
 deploy:
   - provider: NuGet
