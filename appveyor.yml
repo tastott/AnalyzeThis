@@ -24,6 +24,6 @@ deploy:
     api_key:
       secure: JKSF+JBSgoRDTd58vAFcg1vXm9sL2Cg2eBgU3w5088BZp9gIC0tqdjN8gwlxHNXS
     skip_symbols: true
-    artifact: AnalyzeThis.*.nupkg
+    artifact: AnalyzeThis.$(appveyor_build_version).nupkg
     on:
       branch: master
