@@ -22,7 +22,7 @@ namespace AnalyzeThis.ReadonlyField
 
         public ReadonlyFieldRule() 
             : base(
-                  diagnosticId: "CSharpAnalyzer", 
+                  diagnosticId: "AT001", 
                   title: "Readonly fields must be assigned.", 
                   messageFormat: "Readonly field(s) not assigned in constructor: {0}.", 
                   category: "TODO", 

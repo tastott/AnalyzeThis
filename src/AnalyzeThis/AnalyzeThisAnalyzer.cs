@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
 using AnalyzeThis.ReadonlyField;
+using AnalyzeThis.Todo;
 
 namespace AnalyzeThis
 {
@@ -18,7 +19,8 @@ namespace AnalyzeThis
         internal readonly static IEnumerable<AnalysisRule> AllRules = 
             new AnalysisRule[]
             {
-                new ReadonlyFieldRule()
+                new ReadonlyFieldRule(),
+                new TodoRule()
             };
 
         private readonly IEnumerable<AnalysisRule> rules;
