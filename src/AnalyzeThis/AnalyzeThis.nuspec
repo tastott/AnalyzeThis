@@ -2,14 +2,14 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>AnalyzeThis</id>
-    <version>$version$</version>
-    <title>$title$</title>
+    <version>1.0.0.0</version>
+    <title>AnalyzeThis</title>
     <authors>Tim Stott</authors>
     <owners>Tim Stott</owners>
     <licenseUrl>https://github.com/tastott/AnalyzeThis/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/tastott/AnalyzeThis</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <description>$description$</description>
+    <description>A smattering of diagnostics and code fixes for C#.</description>
     <releaseNotes></releaseNotes>
     <copyright></copyright>
     <tags>C#, analyzers</tags>
