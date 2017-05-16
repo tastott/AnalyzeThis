@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="CSharpAnalyzer.Microsoft.79afe7c4-d658-43d6-ab5c-32843af2911b" Version="1.0" Language="en-US" Publisher="Tim Stott"/>
-    <DisplayName>CSharpAnalyzer</DisplayName>
-    <Description xml:space="preserve">This is a sample diagnostic extension for the .NET Compiler Platform ("Roslyn").</Description>
+    <Identity Id="AnalyzeThis.TimStott.79afe7c4-d658-43d6-ab5c-32843af2911b" Version="1.0" Language="en-US" Publisher="Tim Stott"/>
+    <DisplayName>AnalyzeTihs</DisplayName>
+    <Description xml:space="preserve">A smattering of useful diagnostics and code fixes for C#.Some </Description>
   </Metadata>
   <Installation>
     <InstallationTarget Version="[14.0,]" Id="Microsoft.VisualStudio.Pro" />
@@ -12,8 +12,8 @@
     <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.5,)" />
   </Dependencies>
   <Assets>
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="CSharpAnalyzer" Path="|CSharpAnalyzer|"/>
-    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="CSharpAnalyzer" Path="|CSharpAnalyzer|"/>
+    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="AnalyzeThis" Path="|AnalyzeThis|" />
+    <Asset Type="Microsoft.VisualStudio.Analyzer" d:Source="Project" d:ProjectName="AnalyzeThis" Path="|AnalyzeThis|" />
   </Assets>
   <Prerequisites>
     <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[15.0,16.0)" DisplayName="Visual Studio core editor" />

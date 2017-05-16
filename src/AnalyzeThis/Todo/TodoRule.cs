@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.Diagnostics;
 
-namespace CSharpAnalyzer.Todo
+namespace AnalyzeThis.Todo
 {
     internal class TodoRule : AnalysisRule
     {

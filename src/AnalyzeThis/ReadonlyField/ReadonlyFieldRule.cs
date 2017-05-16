@@ -14,7 +14,7 @@ using Microsoft.CodeAnalysis.CodeActions;
 using Microsoft.CodeAnalysis.Formatting;
 using System.Text.RegularExpressions;
 
-namespace CSharpAnalyzer.ReadonlyField
+namespace AnalyzeThis.ReadonlyField
 {
     internal class ReadonlyFieldRule : FixableAnalysisRule
     {

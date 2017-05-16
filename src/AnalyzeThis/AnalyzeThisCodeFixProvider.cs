@@ -13,27 +13,27 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Rename;
 using Microsoft.CodeAnalysis.Text;
 
-namespace CSharpAnalyzer
+namespace AnalyzeThis
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(CSharpAnalyzerCodeFixProvider)), Shared]
-    public class CSharpAnalyzerCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(AnalyzeThisCodeFixProvider)), Shared]
+    public class AnalyzeThisCodeFixProvider : CodeFixProvider
     {
         private readonly IEnumerable<FixableAnalysisRule> rules;
 
-        public CSharpAnalyzerCodeFixProvider()
-            : this(CSharpAnalyzerAnalyzer.AllRules
+        public AnalyzeThisCodeFixProvider()
+            : this(AnalyzeThisAnalyzer.AllRules
                     .WhereIs<AnalysisRule, FixableAnalysisRule>()
             )
         {
 
         }
 
-        internal CSharpAnalyzerCodeFixProvider(IEnumerable<FixableAnalysisRule> rules)
+        internal AnalyzeThisCodeFixProvider(IEnumerable<FixableAnalysisRule> rules)
         {
             this.rules = rules;
         }
 
-        internal CSharpAnalyzerCodeFixProvider(params FixableAnalysisRule[] rules)
+        internal AnalyzeThisCodeFixProvider(params FixableAnalysisRule[] rules)
         {
             this.rules = rules;
         }

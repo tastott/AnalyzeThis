@@ -7,12 +7,12 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using CSharpAnalyzer.ReadonlyField;
+using AnalyzeThis.ReadonlyField;
 
-namespace CSharpAnalyzer
+namespace AnalyzeThis
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class CSharpAnalyzerAnalyzer : DiagnosticAnalyzer
+    public class AnalyzeThisAnalyzer : DiagnosticAnalyzer
     {
 
         internal readonly static IEnumerable<AnalysisRule> AllRules = 
@@ -23,18 +23,18 @@ namespace CSharpAnalyzer
 
         private readonly IEnumerable<AnalysisRule> rules;
 
-        public CSharpAnalyzerAnalyzer()
+        public AnalyzeThisAnalyzer()
             : this(AllRules)
         {
 
         }
 
-        internal CSharpAnalyzerAnalyzer(IEnumerable<AnalysisRule> rules)
+        internal AnalyzeThisAnalyzer(IEnumerable<AnalysisRule> rules)
         {
             this.rules = rules;
         }
 
-        internal CSharpAnalyzerAnalyzer(params AnalysisRule[] rules)
+        internal AnalyzeThisAnalyzer(params AnalysisRule[] rules)
         {
             this.rules = rules;
         }

@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpAnalyzer", "CSharpAnalyzer\CSharpAnalyzer\CSharpAnalyzer.csproj", "{F161EA05-E71F-42DD-9014-61D778029B0E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyzeThis", "AnalyzeThis\AnalyzeThis.csproj", "{F161EA05-E71F-42DD-9014-61D778029B0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpAnalyzer.Test", "CSharpAnalyzer\CSharpAnalyzer.Test\CSharpAnalyzer.Test.csproj", "{D305ACC7-395E-4068-822A-905A22F06CF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyzeThis.Test", "AnalyzeThis.Test\AnalyzeThis.Test.csproj", "{D305ACC7-395E-4068-822A-905A22F06CF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpAnalyzer.Vsix", "CSharpAnalyzer\CSharpAnalyzer.Vsix\CSharpAnalyzer.Vsix.csproj", "{7142E979-BF4A-4EF2-97C4-0ECA124EF5D5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnalyzeThis.Vsix", "AnalyzeThis.Vsix\AnalyzeThis.Vsix.csproj", "{7142E979-BF4A-4EF2-97C4-0ECA124EF5D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

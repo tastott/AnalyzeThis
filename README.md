@@ -1,2 +1,2 @@
-# CSharpAnalyzer
-Experimental CSharpAnalyzer with code fixes
+# Analyze This
+A smattering of diagnostics and code fixes for C#.

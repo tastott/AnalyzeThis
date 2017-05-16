@@ -1,10 +1,10 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TestHelper;
-using CSharpAnalyzer.ReadonlyField;
-using CSharpAnalyzer.Test.Verifiers;
+using AnalyzeThis.ReadonlyField;
+using AnalyzeThis.Test.Verifiers;
 
-namespace CSharpAnalyzer.Test
+namespace AnalyzeThis.Test
 {
     [TestClass]
     public class ReadonlyFieldRuleTests : FixableAnalysisRuleVerifier

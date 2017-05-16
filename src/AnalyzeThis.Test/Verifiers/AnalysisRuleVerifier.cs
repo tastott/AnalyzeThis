@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.CodeAnalysis.Diagnostics;
 using TestHelper;
 
-namespace CSharpAnalyzer.Test.Verifiers
+namespace AnalyzeThis.Test.Verifiers
 {
     public abstract class AnalysisRuleVerifier : DiagnosticVerifier
     {
@@ -19,7 +19,7 @@ namespace CSharpAnalyzer.Test.Verifiers
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAnalyzerAnalyzer(this.rule);
+            return new AnalyzeThisAnalyzer(this.rule);
         }
     }
 }

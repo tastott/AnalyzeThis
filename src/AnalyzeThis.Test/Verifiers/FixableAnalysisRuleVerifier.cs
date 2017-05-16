@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.CodeFixes;
 using Microsoft.CodeAnalysis.Diagnostics;
 using TestHelper;
 
-namespace CSharpAnalyzer.Test.Verifiers
+namespace AnalyzeThis.Test.Verifiers
 {
     public abstract class FixableAnalysisRuleVerifier : CodeFixVerifier
     {
@@ -20,12 +20,12 @@ namespace CSharpAnalyzer.Test.Verifiers
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new CSharpAnalyzerAnalyzer(this.rule);
+            return new AnalyzeThisAnalyzer(this.rule);
         }
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new CSharpAnalyzerCodeFixProvider(this.rule);
+            return new AnalyzeThisCodeFixProvider(this.rule);
         }
     }
 }
