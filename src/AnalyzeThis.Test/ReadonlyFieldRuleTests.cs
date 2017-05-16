@@ -43,7 +43,7 @@ namespace AnalyzeThis.Test
     }";
             var expected = new DiagnosticResult
             {
-                Id = "CSharpAnalyzer",
+                Id = ReadonlyFieldRule.Id,
                 Message = $"Readonly field(s) not assigned in constructor: blah.",
                 Severity = DiagnosticSeverity.Error,
                 Locations =
@@ -101,7 +101,7 @@ namespace AnalyzeThis.Test
 
             var expected = new DiagnosticResult
             {
-                Id = "CSharpAnalyzer",
+                Id = ReadonlyFieldRule.Id,
                 Message = $"Readonly field(s) not assigned in constructor: foo.",
                 Severity = DiagnosticSeverity.Error,
                 Locations =

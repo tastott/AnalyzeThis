@@ -12,10 +12,11 @@ namespace AnalyzeThis.Todo
 {
     internal class TodoRule : AnalysisRule
     {
+        public static readonly string Id = "AT002";
         private static readonly Regex TodoPattern = new Regex(@"^//\s*(TODO\b.+)", RegexOptions.IgnoreCase);
 
         public TodoRule() 
-            : base(diagnosticId: "AT002", title: "TODO comment", messageFormat: "{0}", category: "TODO", severity: DiagnosticSeverity.Info, description: "TODO comment")
+            : base(diagnosticId: Id, title: "TODO comment", messageFormat: "{0}", category: "TODO", severity: DiagnosticSeverity.Info, description: "TODO comment")
         {
         }
 

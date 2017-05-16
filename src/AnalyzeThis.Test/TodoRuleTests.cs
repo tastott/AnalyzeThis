@@ -45,7 +45,7 @@ namespace MyNamespace
 }";
             var expected = new DiagnosticResult
             {
-                Id = "Todo",
+                Id = TodoRule.Id,
                 Message = $"TODO: Blah, blah, etc.",
                 Severity = DiagnosticSeverity.Info,
                 Locations =

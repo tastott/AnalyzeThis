@@ -18,11 +18,13 @@ namespace AnalyzeThis.ReadonlyField
 {
     internal class ReadonlyFieldRule : FixableAnalysisRule
     {
+        public static readonly string Id = "AT001";
+
         private readonly string fixTitle = "Set with constructor parameter";
 
         public ReadonlyFieldRule() 
             : base(
-                  diagnosticId: "AT001", 
+                  diagnosticId: Id, 
                   title: "Readonly fields must be assigned.", 
                   messageFormat: "Readonly field(s) not assigned in constructor: {0}.", 
                   category: "TODO", 
