@@ -1,0 +1,18 @@
+version: "{build}"
+configuration: Release
+image: Visual Studio 2017
+
+init:
+  - ps: 'Update-AppveyorBuild -Version "1.0.$env:appveyor_build_number.$([math]::Truncate(((Get-Date) - (Get-Date -Year 2017 -Month 1 -Day 1 -Hour 0 -Minute 0 -Second 0)).TotalDays))"'
+
+install:
+  - ps: nuget restore src\AnalyzeThis.sln
+
+assembly_info:
+  patch: true
+  file: AssemblyInfo.cs
+  assembly_version: "{version}"
+
+build:
+  verbosity: minimal
+  project: src\AnalyzeThis.sln
